@@ -12,7 +12,6 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import ProductCard from "@/components/ProductCard";
 import { getImageUrl } from "@/utils/image";
-import { useBlogStore, Blog } from "@/store/useBlogStore";
 
 const PER_PAGE = 12;
 
@@ -20,31 +19,24 @@ export default function Home() {
   const products = useProductStore(state => state.products);
   const productsLoading = useProductStore(state => state.loading);
   const fetchProducts = useProductStore(state => state.fetchProducts);
-  
+
   const allBanners = useBannerStore(state => state.banners);
   const bannersLoading = useBannerStore(state => state.loading);
   const fetchBanners = useBannerStore(state => state.fetchBanners);
-  
-  const fetchPublicBlogs = useBlogStore(state => state.fetchPublicBlogs);
+
   const banners = allBanners.filter(b => !b.category || b.category === 'Home');
   const [page, setPage] = useState(1);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, Infinity]);
-  const [homeBlog, setHomeBlog] = useState<Blog | null>(null);
 
   useEffect(() => {
     fetchProducts();
     fetchBanners();
 
-    fetchPublicBlogs()
-      .then(data => {
-        const blog = data.find(b => b.category?.toLowerCase() === 'home');
-        if (blog) setHomeBlog(blog);
-      })
-      .catch(() => {});
-  }, [fetchProducts, fetchBanners, fetchPublicBlogs]);
+
+  }, [fetchProducts, fetchBanners,]);
 
   // Filter by category, colors and price
   const filtered = products.filter((p) => {
@@ -137,51 +129,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* Brand Vision / About Section */}
-      <section className="max-w-[1600px] mx-auto px-4 md:px-8 py-16 md:py-24">
-        <style>{`
-          .about-content * { max-width: 100% !important; word-break: break-word !important; overflow-wrap: break-word !important; box-sizing: border-box !important; }
-          .about-content table { table-layout: fixed !important; width: 100% !important; }
-          .about-content img { height: auto !important; }
-          .about-content pre { white-space: pre-wrap !important; }
-        `}</style>
-        <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-stretch">
-          <div className="flex-1 min-w-0 bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 p-8 md:p-12 rounded-[2.5rem] shadow-sm transition-colors">
-            <h2 className="text-3xl font-bold mb-8 tracking-tight text-gray-900 dark:text-gray-100 uppercase italic">
-              {homeBlog?.title || 'The Vision'}
-            </h2>
-            {homeBlog ? (
-              <div
-                className="about-content prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-400 leading-relaxed space-y-4"
-                dangerouslySetInnerHTML={{ __html: homeBlog.content }}
-              />
-            ) : (
-              <div className="space-y-6">
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
-                  Wink was founded on the belief that clothing is more than just fabric—it&apos;s an expression of identity. We curate collections that balance timeless silhouettes with contemporary edge.
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Our mission is to provide high-quality, sustainable fashion that empowers individuals to feel confident and stylish in every moment of their lives.
-                </p>
-              </div>
-            )}
-          </div>
-          <div className="w-full md:w-80 lg:w-96 flex-shrink-0 aspect-square bg-gray-100 dark:bg-neutral-800 rounded-[2.5rem] overflow-hidden shadow-2xl">
-            {homeBlog?.image_url ? (
-              <img
-                src={getImageUrl(homeBlog.image_url) || ''}
-                alt={homeBlog.title || "Vision"}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-200 dark:from-neutral-700 to-gray-50 dark:to-neutral-900 flex items-center justify-center">
-                <span className="text-gray-300 dark:text-neutral-600 font-black text-6xl uppercase transform -rotate-12">Artistry</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Main Content Area */}
       <section id="products" className="max-w-[1600px] mx-auto px-4 md:px-8 py-8 md:py-12 flex gap-6 items-start">
         <Sidebar
@@ -218,9 +165,9 @@ export default function Home() {
                 className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:border-black dark:hover:border-white transition-colors"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="4" y1="6" x2="20" y2="6"/>
-                  <line x1="8" y1="12" x2="16" y2="12"/>
-                  <line x1="11" y1="18" x2="13" y2="18"/>
+                  <line x1="4" y1="6" x2="20" y2="6" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                  <line x1="11" y1="18" x2="13" y2="18" />
                 </svg>
                 Filter
                 {(selectedCategory !== "All Products" || selectedColors.length > 0) && (
@@ -285,7 +232,7 @@ export default function Home() {
                   className={`w-10 h-10 rounded-full text-sm font-bold transition-all ${p === page
                     ? 'bg-black text-white dark:bg-white dark:text-black'
                     : 'border border-gray-200 dark:border-neutral-800 text-gray-500 dark:text-gray-400 hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   {p}
                 </button>
