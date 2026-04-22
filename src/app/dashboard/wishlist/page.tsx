@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
+import ProductImageModal from "@/components/ProductImageModal";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useProductStore } from "@/store/useProductStore";
@@ -14,6 +15,8 @@ export default function WishlistPage() {
   const router = useRouter();
   const { products, fetchProducts } = useProductStore();
   const { ids, hydrate, hydrated } = useWishlistStore();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) router.push("/sign-in");
@@ -64,12 +67,26 @@ export default function WishlistPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-            {wishlistProducts.map((p) => (
-              <ProductCard key={p.id} {...p} />
+            {wishlistProducts.map((p, index) => (
+              <ProductCard 
+                key={p.id} 
+                {...p} 
+                onImageClick={() => {
+                  setPreviewIndex(index);
+                  setIsPreviewOpen(true);
+                }}
+              />
             ))}
           </div>
         )}
       </div>
+
+      <ProductImageModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        products={wishlistProducts}
+        initialIndex={previewIndex}
+      />
     </main>
   );
 }
